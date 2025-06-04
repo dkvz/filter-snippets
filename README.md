@@ -10,6 +10,8 @@ These are mostly for my blog. I used to write my articles on a [dated Electron a
     + Requires having a structured way to store the hardcoded snippets 
 - Should we have snippet categories? Let's start with naming conventions
 
+Call the binary with the "-p" argument and a snippet name to generate the placeholders - Just outputs the result if there are no placeholders for that snippet.
+
 ## Why are we hardcoding snippets in the binary?
 Well, it has to be easily usable in different environments / OS and I'd rather have a single binary to move around. This is just for me anyway why am I answering questions I ask myself?
 
@@ -44,3 +46,6 @@ The alt text can be an empty line to ignore it (NOT COOL THO), we also allow leg
 -> We should probably always allow empty values.
 
 The thing that parses these placeholders is a bit too modular to be some sort of descriptive language. It could be a function at first - We could just give it lines from stdin and it figures out what do output.
+
+## TODO
+- CLI completion would be really nice for this project
