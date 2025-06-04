@@ -1,3 +1,8 @@
+use std::io;
+
 fn main() {
-    println!("Hello, world!");
+    let lines = io::stdin().lines();
+    for line in lines {
+        println!("got a line: {}", line.unwrap());
+    }
 }
