@@ -1,4 +1,5 @@
 mod cli;
+mod snippets;
 
 use anyhow::Result;
 use cli::run;

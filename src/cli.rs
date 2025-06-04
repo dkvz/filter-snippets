@@ -1,3 +1,4 @@
+use crate::snippets;
 use anyhow::{Result, anyhow};
 use clap::Parser;
 use std::io;
@@ -25,10 +26,21 @@ pub fn run() -> Result<()> {
         return Err(anyhow!("missing the snippet name"));
     }
 
-    // let lines = io::stdin().lines();
-    // for line in lines {
-    //     println!("got a line: {}", line.unwrap());
-    // }
+    // If requesting placeholders, we don't care about the input.
+
+    // Processing the input:
+    let mut input_lines: Vec<String> = Vec::new();
+    let lines = io::stdin().lines();
+    for line in lines {
+        // I ignore readline errors
+        // Don't even know what they can be I can't
+        // create one myself.
+        if line.is_ok() {
+            input_lines.push(line.unwrap());
+        }
+    }
+
+    println!("OK so we got {} elements", input_lines.len());
 
     Ok(())
 }
