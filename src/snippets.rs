@@ -27,7 +27,7 @@ const SNIPPETS: [Snippet; 1] = [Snippet {
         alt\n\
         legend",
     ),
-    process_snippet: |values| String::from("IMAGE"),
+    process_snippet: |_| String::from("IMAGE"),
 }];
 
 fn get_snippet(name: &str) -> Result<&Snippet> {
@@ -41,6 +41,13 @@ fn get_snippet(name: &str) -> Result<&Snippet> {
     }
 
     Ok(snip.unwrap())
+}
+
+// Returns all the names of snippets sorted alphabetically
+pub fn snippet_list() -> Vec<String> {
+    let mut snips: Vec<String> = SNIPPETS.iter().map(|s| String::from(s.name)).collect();
+    snips.sort();
+    snips
 }
 
 // If the snippet has no placeholder, return the processed value immediately.

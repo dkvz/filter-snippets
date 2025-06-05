@@ -17,9 +17,11 @@ struct Args {
 
 pub fn run() -> Result<()> {
     let args = Args::parse();
-    println!("{:?}", args);
 
-    // TODO: Check if the list is requested
+    if args.list {
+        println!("{}", snippets::snippet_list().join("\n"));
+        return Ok(());
+    }
 
     // We should have a snippet name here or it's an error
     if args.snippet.is_none() {
