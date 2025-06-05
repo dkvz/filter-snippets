@@ -9,73 +9,116 @@
 
 use crate::snippets::Snippet;
 
+// Could be in some utils module
+fn values_to_array(values: Option<&Vec<String>>, count: usize) -> Vec<&str> {
+    if let Some(vals) = values {
+        let mut ret: Vec<&str> = Vec::with_capacity(count);
+        for v in vals {
+            ret.push(v);
+        }
+        while ret.len() < count {
+            ret.push("");
+        }
+        ret
+    } else {
+        vec![""; count]
+    }
+}
+
 // Create a big fat array
 // I think it's just faster to browse than a HashMap for what I'm doing
 // I have to update the count manually though. Rust is fun.
-pub const SNIPPETS: [Snippet; 1] = [Snippet {
-    name: "b-image",
-    placeholders: Some(
-        "max-width (in px)\n\
+pub const SNIPPETS: [Snippet; 3] = [
+    Snippet {
+        name: "b-image",
+        placeholders: Some(
+            "max-width (in px)\n\
         image_link image_src\n\
         alt\n\
         legend",
-    ),
-    process_snippet: |values| {
-        let args: [&str; 5] = if let Some(vals) = values {
-            // Extract the width or use 1000:
-            let width = vals
-                .get(0)
-                .map(|w| w.parse::<u32>().unwrap_or(1000))
-                .unwrap();
+        ),
+        process_snippet: |values| {
+            let args: [&str; 5] = if let Some(vals) = values {
+                // Extract the width or use 1000:
+                let width = vals
+                    .get(0)
+                    .map(|w| w.parse::<u32>().unwrap_or(1000))
+                    .unwrap();
 
-            let mut img_link = String::new();
-            let mut img_src = String::new();
-            if let Some(imgs) = vals.get(1) {
-                let urls: Vec<&str> = imgs.split(' ').collect();
-                img_link = String::from(*(urls.get(0).unwrap_or(&"/wp-content/stuff/")));
-                match urls.get(1) {
-                    Some(u) => {
-                        img_src = String::from(*u);
-                    }
-                    None => {
-                        img_src = img_link.clone();
+                let mut img_link = String::new();
+                let mut img_src = String::new();
+                if let Some(imgs) = vals.get(1) {
+                    let urls: Vec<&str> = imgs.split(' ').collect();
+                    img_link = String::from(*(urls.get(0).unwrap_or(&"/wp-content/stuff/")));
+                    match urls.get(1) {
+                        Some(u) => {
+                            img_src = String::from(*u);
+                        }
+                        None => {
+                            img_src = img_link.clone();
+                        }
                     }
                 }
-            }
 
-            let alt = if vals.len() > 2 {
-                vals.get(2).unwrap()
+                let alt = if vals.len() > 2 {
+                    vals.get(2).unwrap()
+                } else {
+                    ""
+                };
+
+                let legend = if vals.len() > 3 {
+                    vals.get(3).unwrap()
+                } else {
+                    ""
+                };
+
+                [
+                    &width.to_string(),
+                    &img_link.clone(),
+                    &img_src.clone(),
+                    alt,
+                    legend,
+                ]
             } else {
-                ""
+                [""; 5]
             };
 
-            let legend = if vals.len() > 3 {
-                vals.get(3).unwrap()
-            } else {
-                ""
-            };
-
-            [
-                &width.to_string(),
-                &img_link.clone(),
-                &img_src.clone(),
-                alt,
-                legend,
-            ]
-        } else {
-            [""; 5]
-        };
-
-        // Isn't there a better way to flatten my array into format! arguments?
-        // I don't know lol
-        format!(
-            "<div class=\"card-panel z-depth-3 article-image center-image\" \
+            // Isn't there a better way to flatten my array into format! arguments?
+            // I don't know lol
+            format!(
+                "<div class=\"card-panel z-depth-3 article-image center-image\" \
             style=\"max-width: {}px\">\n\
             <a href=\"{}\" target=\"_blank\">\
             <img src=\"{}\" alt=\"{}\" class=\"responsive-img\"></a>\n\
             <div class=\"image-legend\">{}</div>\n\
             </div>",
-            args[0], args[1], args[2], args[3], args[4]
-        )
+                args[0], args[1], args[2], args[3], args[4]
+            )
+        },
     },
-}];
+    Snippet {
+        name: "b-s-img",
+        placeholders: Some("src\nalt"),
+        process_snippet: |values| {
+            let vals = values_to_array(values, 2);
+            format!(
+                "<p><img src=\"{}\" alt= \"{}\" \
+            class=\"responsive-img center-image\"></p>",
+                vals[0], vals[1]
+            )
+        },
+    },
+    Snippet {
+        name: "b-sl-img",
+        placeholders: Some("link\nsrc\nalt"),
+        process_snippet: |values| {
+            let vals = values_to_array(values, 3);
+            format!(
+                "<p><a href=\"{}\" target=\"_blank\">\
+                    <img src=\"{}\" alt= \"{}\" \
+            class=\"responsive-img center-image\"></a></p>",
+                vals[0], vals[1], vals[3]
+            )
+        },
+    },
+];

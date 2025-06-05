@@ -51,3 +51,4 @@ The thing that parses these placeholders is a bit too modular to be some sort of
 
 ## TODO
 - CLI completion would be really nice for this project
+- Should probably add a description for snippets to print in the list
