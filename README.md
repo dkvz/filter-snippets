@@ -3,7 +3,7 @@ A bunch of vim filters that read from stdin (params arranged line by line) and o
 
 I could just use LuaSnip snippets for these. I could.
 
-This project is only useful to me, unless you change the whole array in `snippets.rs`.
+This project is only useful to me, unless you change the whole array in `hardcoded_snippets.rs`.
 
 These are mostly for my blog. I used to write my articles on a [dated Electron app](https://github.com/dkvz/electron-blog-authoring) I wrote to learn about Electron and editing (regretted it somewhat quickly after that because making an editor is almost always a bad idea).
 
