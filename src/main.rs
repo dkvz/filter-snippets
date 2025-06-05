@@ -1,4 +1,5 @@
 mod cli;
+mod hardcoded_snippets;
 mod snippets;
 
 use anyhow::Result;
