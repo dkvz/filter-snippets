@@ -28,9 +28,9 @@ fn values_to_array(values: Option<&Vec<String>>, count: usize) -> Vec<&str> {
 // Create a big fat array
 // I think it's just faster to browse than a HashMap for what I'm doing
 // I have to update the count manually though. Rust is fun.
-pub const SNIPPETS: [Snippet; 3] = [
+pub const SNIPPETS: [Snippet; 4] = [
     Snippet {
-        name: "b-image",
+        name: "b-img",
         placeholders: Some(
             "max-width (in px)\n\
         image_link image_src\n\
@@ -97,7 +97,7 @@ pub const SNIPPETS: [Snippet; 3] = [
         },
     },
     Snippet {
-        name: "b-s-img",
+        name: "b-img-s",
         placeholders: Some("src\nalt"),
         process_snippet: |values| {
             let vals = values_to_array(values, 2);
@@ -109,7 +109,7 @@ pub const SNIPPETS: [Snippet; 3] = [
         },
     },
     Snippet {
-        name: "b-sl-img",
+        name: "b-img-sl",
         placeholders: Some("link\nsrc\nalt"),
         process_snippet: |values| {
             let vals = values_to_array(values, 3);
@@ -117,8 +117,52 @@ pub const SNIPPETS: [Snippet; 3] = [
                 "<p><a href=\"{}\" target=\"_blank\">\
                     <img src=\"{}\" alt= \"{}\" \
             class=\"responsive-img center-image\"></a></p>",
-                vals[0], vals[1], vals[3]
+                vals[0], vals[1], vals[2]
             )
+        },
+    },
+    Snippet {
+        name: "b-img-gal",
+        placeholders: Some(
+            "link_href img_src\n\
+            alt\n\
+            ...repeat",
+        ),
+        process_snippet: |values| {
+            let tpl = "<a href=\"{href}\" target=\"_blank\" rel=\"noopener\">\
+                <img src=\"{src}\" alt=\"{alt}\"></a>\n";
+            let mut ret = String::from("<p class=\"image-row\">\n");
+
+            if values.is_none_or(|vals| vals.is_empty()) {
+                // If there are no values just output a gallery with
+                // two example empty elements.
+                let empty_line = tpl
+                    .replace("{href}", "")
+                    .replace("{src}", "")
+                    .replace("{alt}", "");
+                ret.push_str(&empty_line.repeat(2));
+            } else {
+                let mut vals = values.unwrap().iter();
+                while let Some(v) = vals.next() {
+                    // Split the values (space separated):
+                    let urls: Vec<&str> = v.split(' ').collect();
+                    let href = *(urls.get(0).unwrap_or(&""));
+                    let src = *(urls.get(1).unwrap_or(&""));
+                    // We also need the next value for alt text.
+                    let alt: &str = match vals.next() {
+                        Some(s) => &s,
+                        None => "",
+                    };
+                    let line = tpl
+                        .replace("{href}", href)
+                        .replace("{src}", src)
+                        .replace("{alt}", alt);
+                    ret.push_str(&line);
+                }
+            }
+
+            ret.push_str("</p>");
+            return ret;
         },
     },
 ];
