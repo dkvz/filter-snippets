@@ -28,7 +28,7 @@ fn values_to_array(values: Option<&Vec<String>>, count: usize) -> Vec<&str> {
 // Create a big fat array
 // I think it's just faster to browse than a HashMap for what I'm doing
 // I have to update the count manually though. Rust is fun.
-pub const SNIPPETS: [Snippet; 4] = [
+pub const SNIPPETS: [Snippet; 6] = [
     Snippet {
         name: "b-img",
         placeholders: Some(
@@ -163,6 +163,54 @@ pub const SNIPPETS: [Snippet; 4] = [
 
             ret.push_str("</p>");
             return ret;
+        },
+    },
+    Snippet {
+        name: "b-code",
+        placeholders: Some(
+            "language\n\
+            Your code here (can be multiple lines)",
+        ),
+        process_snippet: |values| {
+            let mut ret = String::new();
+            // If the first line is longer than 18 characters it's probably a line of code.
+            if let Some(vals) = values {
+                let mut v_iter = vals.iter();
+                let first = v_iter.next();
+                if first.is_some_and(|f| f.len() < 19) {
+                    ret.push_str(&format!(
+                        "<pre class=\"screen\"><code class=\"language-{}\">",
+                        first.unwrap()
+                    ));
+                } else {
+                    ret.push_str("<pre class=\"screen\"><code>");
+                }
+                // Push the rest of the lines
+                for line in v_iter {
+                    ret.push_str(line);
+                    ret.push('\n');
+                }
+            } else {
+                ret.push_str("<pre class=\"screen\"><code>");
+            }
+            ret.push_str("</code></pre>");
+
+            return ret;
+        },
+    },
+    Snippet {
+        name: "b-video",
+        placeholders: Some("video_url"),
+        process_snippet: |values| {
+            let vals = values_to_array(values, 1);
+            format!(
+                "<video class=\"responsive-video\" preload=\"none\" controls=\"\" \
+                    poster=\"/wp-content/stuff/1080p_shrimp_pholder.jpg\">\n\
+                    <source src=\"{}\" type=\"video/mp4\">\n\
+                    <p>Votre navigateur n'a pas la capacité de lire les vidéos HTML5.</p>\n\
+                </video>",
+                vals[0]
+            )
         },
     },
 ];
