@@ -140,14 +140,16 @@ pub const SNIPPETS: [Snippet; 6] = [
                     .replace("{href}", "")
                     .replace("{src}", "")
                     .replace("{alt}", "");
-                ret.push_str(&empty_line.repeat(2));
+                ret.push_str(&empty_line);
+                // Got no better way to do this
+                ret.push_str(&empty_line);
             } else {
                 let mut vals = values.unwrap().iter();
                 while let Some(v) = vals.next() {
                     // Split the values (space separated):
                     let urls: Vec<&str> = v.split(' ').collect();
                     let href = *(urls.get(0).unwrap_or(&""));
-                    let src = *(urls.get(1).unwrap_or(&""));
+                    let src = *(urls.get(1).unwrap_or(&href));
                     // We also need the next value for alt text.
                     let alt: &str = match vals.next() {
                         Some(s) => &s,

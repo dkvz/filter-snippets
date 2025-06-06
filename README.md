@@ -50,5 +50,6 @@ The alt text can be an empty line to ignore it (NOT COOL THO), we also allow leg
 The thing that parses these placeholders is a bit too modular to be some sort of descriptive language. It could be a function at first - We could just give it lines from stdin and it figures out what do output.
 
 ## TODO
+- Have to set the input lines to None if given a single empty line because that's what vim does
 - CLI completion would be really nice for this project
 - Should probably add a description for snippets to print in the list
