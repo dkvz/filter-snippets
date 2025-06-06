@@ -140,9 +140,9 @@ pub const SNIPPETS: [Snippet; 6] = [
                     .replace("{href}", "")
                     .replace("{src}", "")
                     .replace("{alt}", "");
-                ret.push_str(&empty_line);
+                ret.push_str(&empty_line.repeat(2));
                 // Got no better way to do this
-                ret.push_str(&empty_line);
+                // ret.push_str(&empty_line);
             } else {
                 let mut vals = values.unwrap().iter();
                 while let Some(v) = vals.next() {
@@ -176,16 +176,17 @@ pub const SNIPPETS: [Snippet; 6] = [
         process_snippet: |values| {
             let mut ret = String::new();
             // If the first line is longer than 18 characters it's probably a line of code.
+            // I'm also throwing in that it should not have spaces.
             if let Some(vals) = values {
                 let mut v_iter = vals.iter();
-                let first = v_iter.next();
-                if first.is_some_and(|f| f.len() < 19) {
+                let first: &str = v_iter.next().map(|f| f.as_str()).unwrap_or("");
+                if first.len() < 19 && !first.contains(' ') {
                     ret.push_str(&format!(
                         "<pre class=\"screen\"><code class=\"language-{}\">",
-                        first.unwrap()
+                        first
                     ));
                 } else {
-                    ret.push_str("<pre class=\"screen\"><code>");
+                    ret.push_str(&format!("<pre class=\"screen\"><code>{}\n", first));
                 }
                 // Push the rest of the lines
                 for line in v_iter {

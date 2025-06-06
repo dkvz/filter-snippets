@@ -50,8 +50,18 @@ pub fn run() -> Result<()> {
 
 fn input_lines() -> Vec<String> {
     let mut input_lines: Vec<String> = Vec::new();
-    let lines = io::stdin().lines();
-    for line in lines {
+
+    let mut lines_iter = io::stdin().lines().into_iter();
+    // This is ugly lol
+    if let Some(l) = lines_iter.next() {
+        if let Ok(line_str) = l {
+            if !line_str.trim().is_empty() {
+                input_lines.push(line_str)
+            }
+        }
+    }
+
+    for line in lines_iter {
         // I ignore readline errors
         // Don't even know what they can be I can't
         // create one myself.
