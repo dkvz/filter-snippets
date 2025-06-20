@@ -7,6 +7,8 @@ This project is only useful to me, unless you change the whole array in `hardcod
 
 These are mostly for my blog. I used to write my articles on a [dated Electron app](https://github.com/dkvz/electron-blog-authoring) I wrote to learn about Electron and editing (regretted it somewhat quickly after that because making an editor is almost always a bad idea).
 
+I rename the binary `sf` (used to be `fs` but that sounds like a filesystem and I didn't like it). Should probably add a Makefile someday to build and install. Unless Cargo can do it for me on its own.
+
 ## Features
 - Show the list of available snippets with some arguments
     + Requires having a structured way to store the hardcoded snippets 

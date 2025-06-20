@@ -1,6 +1,7 @@
 mod cli;
 mod hardcoded_snippets;
 mod snippets;
+mod utils;
 
 use anyhow::Result;
 use cli::run;

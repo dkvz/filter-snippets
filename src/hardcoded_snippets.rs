@@ -7,23 +7,10 @@
 * testing easy but function typing and sharing is too annoying.
 */
 
-use crate::snippets::Snippet;
-
-// Could be in some utils module
-fn values_to_array(values: Option<&Vec<String>>, count: usize) -> Vec<&str> {
-    if let Some(vals) = values {
-        let mut ret: Vec<&str> = Vec::with_capacity(count);
-        for v in vals {
-            ret.push(v);
-        }
-        while ret.len() < count {
-            ret.push("");
-        }
-        ret
-    } else {
-        vec![""; count]
-    }
-}
+use crate::{
+    snippets::Snippet,
+    utils::{escape_double_quotes, escape_html, values_to_array},
+};
 
 // Create a big fat array
 // I think it's just faster to browse than a HashMap for what I'm doing
@@ -33,9 +20,9 @@ pub const SNIPPETS: [Snippet; 6] = [
         name: "b-img",
         placeholders: Some(
             "max-width (in px)\n\
-        image_link image_src\n\
-        alt\n\
-        legend",
+            image_link image_src\n\
+            alt\n\
+            legend",
         ),
         process_snippet: |values| {
             let args: [&str; 5] = if let Some(vals) = values {
@@ -76,7 +63,7 @@ pub const SNIPPETS: [Snippet; 6] = [
                     &width.to_string(),
                     &img_link.clone(),
                     &img_src.clone(),
-                    alt,
+                    &escape_double_quotes(alt),
                     legend,
                 ]
             } else {
@@ -104,7 +91,8 @@ pub const SNIPPETS: [Snippet; 6] = [
             format!(
                 "<p><img src=\"{}\" alt= \"{}\" \
             class=\"responsive-img center-image\"></p>",
-                vals[0], vals[1]
+                vals[0],
+                &escape_double_quotes(vals[1])
             )
         },
     },
@@ -117,7 +105,9 @@ pub const SNIPPETS: [Snippet; 6] = [
                 "<p><a href=\"{}\" target=\"_blank\">\
                     <img src=\"{}\" alt= \"{}\" \
             class=\"responsive-img center-image\"></a></p>",
-                vals[0], vals[1], vals[2]
+                vals[0],
+                vals[1],
+                &escape_double_quotes(vals[2])
             )
         },
     },
@@ -151,14 +141,14 @@ pub const SNIPPETS: [Snippet; 6] = [
                     let href = *(urls.get(0).unwrap_or(&""));
                     let src = *(urls.get(1).unwrap_or(&href));
                     // We also need the next value for alt text.
-                    let alt: &str = match vals.next() {
-                        Some(s) => &s,
-                        None => "",
+                    let alt: String = match vals.next() {
+                        Some(s) => escape_double_quotes(s),
+                        None => String::from(""),
                     };
                     let line = tpl
                         .replace("{href}", href)
                         .replace("{src}", src)
-                        .replace("{alt}", alt);
+                        .replace("{alt}", &alt);
                     ret.push_str(&line);
                 }
             }
@@ -186,11 +176,14 @@ pub const SNIPPETS: [Snippet; 6] = [
                         first
                     ));
                 } else {
-                    ret.push_str(&format!("<pre class=\"screen\"><code>{}\n", first));
+                    ret.push_str(&format!(
+                        "<pre class=\"screen\"><code>{}\n",
+                        escape_html(first)
+                    ));
                 }
                 // Push the rest of the lines
                 for line in v_iter {
-                    ret.push_str(line);
+                    ret.push_str(&escape_html(line));
                     ret.push('\n');
                 }
             } else {

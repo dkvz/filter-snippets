@@ -1,6 +1,6 @@
 [package]
 name = "filter-snippets"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2024"
 
 # Stole most of this from the Microsoft Edit repo
@@ -16,3 +16,4 @@ strip = "symbols"           # See split-debuginfo - allows us to drop the size b
 [dependencies]
 anyhow = "1.0.98"
 clap = { version = "4.5.39", features = ["derive"] }
+html-escape = "0.2.9"
