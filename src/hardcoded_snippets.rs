@@ -214,27 +214,31 @@ pub const SNIPPETS: [Snippet; 7] = [
         placeholders: Some("text_to_comment (can be multiple lines)"),
         process_snippet: |values| {
             let mut ret = String::new();
-            ret.push_str("<!-- ");
-            // TODO: Rewrite this to check if we got only a single
-            // non-empty line when trimmed and inline the comment in
-            // that case.
-            let mut first_line = true;
+            ret.push_str("<!--");
+
+            // We have to check if the first line is empty
             if let Some(vals) = values {
-                for v in vals {
-                    if first_line && !v.trim().is_empty() {
+                let mut v_iter = vals.iter();
+                if let Some(first_line) = v_iter.next() {
+                    let first_line_t = first_line.trim();
+                    if vals.len() == 1 {
+                        ret.push(' ');
+                        ret.push_str(first_line_t);
+                        ret.push(' ');
+                    } else {
                         ret.push('\n');
-                        first_line = false;
+                        ret.push_str(first_line_t);
+                        ret.push('\n');
                     }
+                }
+
+                // Now push the other lines:
+                for v in v_iter {
                     ret.push_str(v);
                     ret.push('\n');
                 }
             }
-
-            if !first_line {
-                ret.push_str("\n-->");
-            } else {
-                ret.push_str(" -->");
-            }
+            ret.push_str("-->");
 
             return ret;
         },
