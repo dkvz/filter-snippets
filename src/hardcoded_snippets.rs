@@ -54,7 +54,7 @@ fn surround_with_html_comments(
 // Create a big fat array
 // I think it's just faster to browse than a HashMap for what I'm doing
 // I have to update the count manually though. Rust is fun.
-pub const SNIPPETS: [Snippet; 8] = [
+pub const SNIPPETS: [Snippet; 10] = [
     Snippet {
         name: "b-img",
         placeholders: Some(
@@ -144,6 +144,35 @@ pub const SNIPPETS: [Snippet; 8] = [
                 "<p><a href=\"{}\" target=\"_blank\">\
                     <img src=\"{}\" alt= \"{}\" \
             class=\"responsive-img center-image\"></a></p>",
+                vals[0],
+                vals[1],
+                &escape_double_quotes(vals[2])
+            )
+        },
+    },
+    Snippet {
+        name: "n-img",
+        placeholders: Some("src\nalt"),
+        process_snippet: |values| {
+            let vals = values_to_array(values, 2);
+            format!(
+                "<p class=\"text-center\">\n\
+                    <img src=\"{}\" alt= \"{}\">\n\
+                </p>",
+                vals[0],
+                &escape_double_quotes(vals[1])
+            )
+        },
+    },
+    Snippet {
+        name: "n-img-l",
+        placeholders: Some("link\nsrc\nalt"),
+        process_snippet: |values| {
+            let vals = values_to_array(values, 3);
+            format!(
+                "<p class=\"text-center\"><a href=\"{}\" target=\"_blank\">\n\
+                    <img src=\"{}\" alt= \"{}\">\n\
+                </a></p>",
                 vals[0],
                 vals[1],
                 &escape_double_quotes(vals[2])
