@@ -13,9 +13,16 @@ use crate::{
 };
 
 // I re-use this one in two snippets
-fn surround_with_html_comments(values: Option<&Vec<String>>) -> String {
+fn surround_with_html_comments(
+    values: Option<&Vec<String>>,
+    first_line_text: Option<&str>,
+) -> String {
     let mut ret = String::new();
     ret.push_str("<!--");
+    if let Some(ftext) = first_line_text {
+        ret.push(' ');
+        ret.push_str(ftext);
+    }
 
     // We have to check if the first line is empty
     if let Some(vals) = values {
@@ -47,7 +54,7 @@ fn surround_with_html_comments(values: Option<&Vec<String>>) -> String {
 // Create a big fat array
 // I think it's just faster to browse than a HashMap for what I'm doing
 // I have to update the count manually though. Rust is fun.
-pub const SNIPPETS: [Snippet; 7] = [
+pub const SNIPPETS: [Snippet; 8] = [
     Snippet {
         name: "b-img",
         placeholders: Some(
@@ -244,6 +251,11 @@ pub const SNIPPETS: [Snippet; 7] = [
     Snippet {
         name: "com",
         placeholders: Some("text_to_comment (can be multiple lines)"),
-        process_snippet: surround_with_html_comments,
+        process_snippet: |values| surround_with_html_comments(values, None),
+    },
+    Snippet {
+        name: "comt",
+        placeholders: Some("text_to_comment (can be multiple lines)"),
+        process_snippet: |values| surround_with_html_comments(values, Some("TODO:")),
     },
 ];
