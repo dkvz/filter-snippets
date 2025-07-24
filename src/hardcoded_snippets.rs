@@ -51,10 +51,52 @@ fn surround_with_html_comments(
     return ret;
 }
 
+// Me believes this could be written better.
+fn surround_with_code_block(
+    values: Option<&Vec<String>>,
+    lang_prefix: Option<&str>,
+    pre_class: Option<&str>,
+) -> String {
+    let mut ret = String::new();
+
+    let pre_el: &str = match pre_class {
+        Some(pre_c) => &format!("<pre class=\"{}\">", &pre_c),
+        None => "<pre>",
+    };
+
+    let lang_pref: &str = lang_prefix.unwrap_or("");
+
+    // If the first line is longer than 18 characters it's probably a line of code.
+    // I'm also throwing in that it should not have spaces.
+    if let Some(vals) = values {
+        let mut v_iter = vals.iter();
+        let first: &str = v_iter.next().map(|f| f.as_str()).unwrap_or("");
+        if first.len() < 19 && !first.contains(' ') {
+            ret.push_str(&format!(
+                "{}<code class=\"{}{}\">",
+                pre_el, lang_pref, first
+            ));
+        } else {
+            ret.push_str(&format!("{}<code>{}\n", pre_el, escape_html(first)));
+        }
+        // Push the rest of the lines
+        for line in v_iter {
+            ret.push_str(&escape_html(line));
+            ret.push('\n');
+        }
+    } else {
+        ret.push_str(pre_el);
+        ret.push_str("<code>");
+    }
+    ret.push_str("</code></pre>");
+
+    return ret;
+}
+
 // Create a big fat array
 // I think it's just faster to browse than a HashMap for what I'm doing
 // I have to update the count manually though. Rust is fun.
-pub const SNIPPETS: [Snippet; 10] = [
+pub const SNIPPETS: [Snippet; 11] = [
     Snippet {
         name: "b-img",
         placeholders: Some(
@@ -232,35 +274,16 @@ pub const SNIPPETS: [Snippet; 10] = [
             Your code here (can be multiple lines)",
         ),
         process_snippet: |values| {
-            let mut ret = String::new();
-            // If the first line is longer than 18 characters it's probably a line of code.
-            // I'm also throwing in that it should not have spaces.
-            if let Some(vals) = values {
-                let mut v_iter = vals.iter();
-                let first: &str = v_iter.next().map(|f| f.as_str()).unwrap_or("");
-                if first.len() < 19 && !first.contains(' ') {
-                    ret.push_str(&format!(
-                        "<pre class=\"screen\"><code class=\"language-{}\">",
-                        first
-                    ));
-                } else {
-                    ret.push_str(&format!(
-                        "<pre class=\"screen\"><code>{}\n",
-                        escape_html(first)
-                    ));
-                }
-                // Push the rest of the lines
-                for line in v_iter {
-                    ret.push_str(&escape_html(line));
-                    ret.push('\n');
-                }
-            } else {
-                ret.push_str("<pre class=\"screen\"><code>");
-            }
-            ret.push_str("</code></pre>");
-
-            return ret;
+            surround_with_code_block(values, Some("language-"), Some("screen"))
         },
+    },
+    Snippet {
+        name: "n-code",
+        placeholders: Some(
+            "language\n\
+            Your code here (can be multiple lines)",
+        ),
+        process_snippet: |values| surround_with_code_block(values, None, None),
     },
     Snippet {
         name: "b-video",
