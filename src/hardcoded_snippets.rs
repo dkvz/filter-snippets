@@ -12,6 +12,38 @@ use crate::{
     utils::{escape_double_quotes, escape_html, values_to_array},
 };
 
+// I re-use this one in two snippets
+fn surround_with_html_comments(values: Option<&Vec<String>>) -> String {
+    let mut ret = String::new();
+    ret.push_str("<!--");
+
+    // We have to check if the first line is empty
+    if let Some(vals) = values {
+        let mut v_iter = vals.iter();
+        if let Some(first_line) = v_iter.next() {
+            let first_line_t = first_line.trim();
+            if vals.len() == 1 {
+                ret.push(' ');
+                ret.push_str(first_line_t);
+                ret.push(' ');
+            } else {
+                ret.push('\n');
+                ret.push_str(first_line_t);
+                ret.push('\n');
+            }
+        }
+
+        // Now push the other lines:
+        for v in v_iter {
+            ret.push_str(v);
+            ret.push('\n');
+        }
+    }
+    ret.push_str("-->");
+
+    return ret;
+}
+
 // Create a big fat array
 // I think it's just faster to browse than a HashMap for what I'm doing
 // I have to update the count manually though. Rust is fun.
@@ -212,35 +244,6 @@ pub const SNIPPETS: [Snippet; 7] = [
     Snippet {
         name: "com",
         placeholders: Some("text_to_comment (can be multiple lines)"),
-        process_snippet: |values| {
-            let mut ret = String::new();
-            ret.push_str("<!--");
-
-            // We have to check if the first line is empty
-            if let Some(vals) = values {
-                let mut v_iter = vals.iter();
-                if let Some(first_line) = v_iter.next() {
-                    let first_line_t = first_line.trim();
-                    if vals.len() == 1 {
-                        ret.push(' ');
-                        ret.push_str(first_line_t);
-                        ret.push(' ');
-                    } else {
-                        ret.push('\n');
-                        ret.push_str(first_line_t);
-                        ret.push('\n');
-                    }
-                }
-
-                // Now push the other lines:
-                for v in v_iter {
-                    ret.push_str(v);
-                    ret.push('\n');
-                }
-            }
-            ret.push_str("-->");
-
-            return ret;
-        },
+        process_snippet: surround_with_html_comments,
     },
 ];
