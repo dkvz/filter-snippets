@@ -15,7 +15,7 @@ use crate::{
 // Create a big fat array
 // I think it's just faster to browse than a HashMap for what I'm doing
 // I have to update the count manually though. Rust is fun.
-pub const SNIPPETS: [Snippet; 6] = [
+pub const SNIPPETS: [Snippet; 7] = [
     Snippet {
         name: "b-img",
         placeholders: Some(
@@ -207,6 +207,36 @@ pub const SNIPPETS: [Snippet; 6] = [
                 </video>",
                 vals[0]
             )
+        },
+    },
+    Snippet {
+        name: "com",
+        placeholders: Some("text_to_comment (can be multiple lines)"),
+        process_snippet: |values| {
+            let mut ret = String::new();
+            ret.push_str("<!-- ");
+            // TODO: Rewrite this to check if we got only a single
+            // non-empty line when trimmed and inline the comment in
+            // that case.
+            let mut first_line = true;
+            if let Some(vals) = values {
+                for v in vals {
+                    if first_line && !v.trim().is_empty() {
+                        ret.push('\n');
+                        first_line = false;
+                    }
+                    ret.push_str(v);
+                    ret.push('\n');
+                }
+            }
+
+            if !first_line {
+                ret.push_str("\n-->");
+            } else {
+                ret.push_str(" -->");
+            }
+
+            return ret;
         },
     },
 ];
