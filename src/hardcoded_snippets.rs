@@ -96,7 +96,7 @@ fn surround_with_code_block(
 // Create a big fat array
 // I think it's just faster to browse than a HashMap for what I'm doing
 // I have to update the count manually though. Rust is fun.
-pub const SNIPPETS: [Snippet; 11] = [
+pub const SNIPPETS: [Snippet; 12] = [
     Snippet {
         name: "b-img",
         placeholders: Some(
@@ -298,6 +298,46 @@ pub const SNIPPETS: [Snippet; 11] = [
                 </video>",
                 vals[0]
             )
+        },
+    },
+    Snippet {
+        name: "b-iframe",
+        placeholders: Some(
+            "width\n\
+            src\n\
+            legend",
+        ),
+        process_snippet: |values| {
+            let mut ret = String::new();
+            ret.push_str(
+                "<div class=\"card-panel z-depth-3 article-image \
+                center-image\" style=\"max-width: ",
+            );
+
+            // This looks like something you shouldn't do in Rust:
+            let mut width = String::from("1000");
+            let mut src = String::new();
+            let mut legend: Option<String> = None;
+            if let Some(vals) = values {
+                width = vals.get(0).unwrap_or(&String::from("1000")).clone();
+                src = vals.get(1).unwrap_or(&String::from("")).clone();
+                if let Some(leg) = vals.get(2) {
+                    legend = Some(leg.clone());
+                }
+            };
+            ret.push_str(&format!(
+                "{}px\">\n\
+                <iframe src=\"{}\" style=\"max-width: {}px; width: 100%;\" height=\"700\">\
+                </iframe>\n",
+                &width, &src, &width
+            ));
+
+            if let Some(leg) = legend {
+                ret.push_str(&format!("<div class=\"image-legend\">{}</div>\n", &leg));
+            }
+            ret.push_str("</div>");
+
+            ret
         },
     },
     Snippet {
