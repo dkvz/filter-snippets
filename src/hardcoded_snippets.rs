@@ -156,8 +156,10 @@ pub const SNIPPETS: [Snippet; 12] = [
             format!(
                 "<div class=\"card-panel z-depth-3 article-image center-image\" \
             style=\"max-width: {}px\">\n\
+            <img-lightbox>\n\
             <a href=\"{}\" target=\"_blank\">\
             <img src=\"{}\" alt=\"{}\" class=\"responsive-img\"></a>\n\
+            </img-lightbox>\n\
             <div class=\"image-legend\">{}</div>\n\
             </div>",
                 args[0], args[1], args[2], args[3], args[4]
@@ -170,8 +172,10 @@ pub const SNIPPETS: [Snippet; 12] = [
         process_snippet: |values| {
             let vals = values_to_array(values, 2);
             format!(
-                "<p><img src=\"{}\" alt= \"{}\" \
-            class=\"responsive-img center-image\"></p>",
+                "<p>\n\
+                <img-lightbox><img src=\"{}\" alt=\"{}\" \
+            class=\"responsive-img center-image\"></img-lightbox>\n\
+                </p>",
                 vals[0],
                 &escape_double_quotes(vals[1])
             )
@@ -183,9 +187,11 @@ pub const SNIPPETS: [Snippet; 12] = [
         process_snippet: |values| {
             let vals = values_to_array(values, 3);
             format!(
-                "<p><a href=\"{}\" target=\"_blank\">\
-                    <img src=\"{}\" alt= \"{}\" \
-            class=\"responsive-img center-image\"></a></p>",
+                "<p>\n\
+                <img-lightbox><a href=\"{}\" target=\"_blank\">\
+                    <img src=\"{}\" alt=\"{}\" \
+            class=\"responsive-img center-image\"></a></img-lightbox>\n\
+                </p>",
                 vals[0],
                 vals[1],
                 &escape_double_quotes(vals[2])
@@ -199,7 +205,7 @@ pub const SNIPPETS: [Snippet; 12] = [
             let vals = values_to_array(values, 2);
             format!(
                 "<p class=\"text-center\">\n\
-                    <img src=\"{}\" alt= \"{}\">\n\
+                    <img src=\"{}\" alt=\"{}\">\n\
                 </p>",
                 vals[0],
                 &escape_double_quotes(vals[1])
@@ -213,7 +219,7 @@ pub const SNIPPETS: [Snippet; 12] = [
             let vals = values_to_array(values, 3);
             format!(
                 "<p class=\"text-center\"><a href=\"{}\" target=\"_blank\">\n\
-                    <img src=\"{}\" alt= \"{}\">\n\
+                    <img src=\"{}\" alt=\"{}\">\n\
                 </a></p>",
                 vals[0],
                 vals[1],
@@ -229,8 +235,8 @@ pub const SNIPPETS: [Snippet; 12] = [
             ...repeat",
         ),
         process_snippet: |values| {
-            let tpl = "<a href=\"{href}\" target=\"_blank\" rel=\"noopener\">\
-                <img src=\"{src}\" alt=\"{alt}\"></a>\n";
+            let tpl = "<img-lightbox><a href=\"{href}\" target=\"_blank\" rel=\"noopener\">\
+                <img src=\"{src}\" alt=\"{alt}\"></a></img-lightbox>\n";
             let mut ret = String::from("<p class=\"image-row\">\n");
 
             if values.is_none_or(|vals| vals.is_empty()) {
