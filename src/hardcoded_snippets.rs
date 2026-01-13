@@ -96,7 +96,7 @@ fn surround_with_code_block(
 // Create a big fat array
 // I think it's just faster to browse than a HashMap for what I'm doing
 // I have to update the count manually though. Rust is fun.
-pub const SNIPPETS: [Snippet; 12] = [
+pub const SNIPPETS: [Snippet; 13] = [
     Snippet {
         name: "b-img",
         placeholders: Some(
@@ -307,7 +307,7 @@ pub const SNIPPETS: [Snippet; 12] = [
         },
     },
     Snippet {
-        name: "b-iframe",
+        name: "b-iframe-w",
         placeholders: Some(
             "width\n\
             src\n\
@@ -344,6 +344,23 @@ pub const SNIPPETS: [Snippet; 12] = [
             ret.push_str("</div>");
 
             ret
+        },
+    },
+    Snippet {
+        name: "b-iframe",
+        placeholders: Some(
+            "src\n\
+            legend",
+        ),
+        process_snippet: |values| {
+            let vals = values_to_array(values, 2);
+            format!(
+                "<div class=\"responsive-iframe article-image\">\n\
+                <iframe src=\"{}\"></iframe>\n\
+                <div class=\"image-legend\">{}</div>\n\
+                </div>",
+                vals[0], vals[1]
+            )
         },
     },
     Snippet {
