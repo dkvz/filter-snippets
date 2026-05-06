@@ -297,7 +297,7 @@ pub const SNIPPETS: [Snippet; 13] = [
         process_snippet: |values| {
             let vals = values_to_array(values, 1);
             format!(
-                "<video class=\"responsive-video\" preload=\"none\" controls=\"\" \
+                "<video class=\"responsive-video center-image\" preload=\"none\" controls=\"\" \
                     poster=\"/wp-content/stuff/1080p_shrimp_pholder.jpg\">\n\
                     <source src=\"{}\" type=\"video/mp4\">\n\
                     <p>Votre navigateur n'a pas la capacité de lire les vidéos HTML5.</p>\n\
