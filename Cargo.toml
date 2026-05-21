@@ -6,7 +6,6 @@ edition = "2024"
 # Stole most of this from the Microsoft Edit repo
 [profile.release]
 codegen-units = 1           # reduces binary size by ~2%
-debug = "full"              # No one needs an undebuggable release binary
 lto = true                  # reduces binary size by ~14%
 # opt-level = "s"             # reduces binary size by ~25%
 panic = "abort"
